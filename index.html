@@ -334,7 +334,12 @@ tr:last-child td { border-bottom: none; }
 
   <!-- SVG Field Map -->
   <div class="venue-map">
-    <svg class="venue-svg" viewBox="0 0 440 330" xmlns="http://www.w3.org/2000/svg">
+    <div id="mapHint" style="display:flex;align-items:center;gap:6px;padding:7px 12px;background:#eff6ff;border-bottom:1px solid #bfdbfe;font-size:11px;color:#1d4ed8;font-weight:500;">
+      <span>🤏 두 손가락으로 확대·축소 / 드래그로 이동</span>
+      <button onclick="resetMap()" style="margin-left:auto;font-size:10px;padding:3px 8px;border-radius:999px;border:1px solid #bfdbfe;background:white;color:#2563eb;cursor:pointer;font-weight:600;">초기화</button>
+    </div>
+    <div id="mapViewport" style="overflow:hidden;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;">
+    <svg id="mapSvg" class="venue-svg" viewBox="0 0 440 330" xmlns="http://www.w3.org/2000/svg" style="transform-origin:0 0;will-change:transform;display:block;">
       <rect width="440" height="330" fill="#f6f7f9"/>
 
       <!-- Outer track surface (brown/red clay) -->
@@ -399,6 +404,7 @@ tr:last-child td { border-bottom: none; }
       <rect x="292" y="264" width="82" height="26" rx="5" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
       <text x="333" y="277" text-anchor="middle" fill="#7c3aed" font-size="9" font-family="'Noto Sans KR',sans-serif">학생회 부스</text>
     </svg>
+    </div><!-- /mapViewport -->
 
     <div class="venue-legend">
       <div class="legend-item"><div class="legend-dot" style="background:#93c5fd;"></div>A구역 (줄다리기)</div>
@@ -971,6 +977,111 @@ function updateClock() {
 
 updateClock();
 setInterval(updateClock, 1000);
+
+// ---- Pinch-zoom & pan for venue map ----
+(function() {
+  const vp = document.getElementById('mapViewport');
+  const svg = document.getElementById('mapSvg');
+  if (!vp || !svg) return;
+
+  let scale = 1, tx = 0, ty = 0;
+  let dragging = false, lastX = 0, lastY = 0;
+  let lastDist = 0, lastMidX = 0, lastMidY = 0;
+
+  function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
+
+  function applyTransform() {
+    const vpW = vp.clientWidth, vpH = vp.clientHeight;
+    const svgW = svg.clientWidth, svgH = svg.clientHeight;
+    const maxTx = 0, minTx = vpW - svgW * scale;
+    const maxTy = 0, minTy = vpH - svgH * scale;
+    tx = clamp(tx, Math.min(minTx, 0), Math.max(maxTx, 0));
+    ty = clamp(ty, Math.min(minTy, 0), Math.max(maxTy, 0));
+    svg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+  }
+
+  window.resetMap = function() {
+    scale = 1; tx = 0; ty = 0;
+    applyTransform();
+  };
+
+  function dist(t) {
+    const dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+  function mid(t) {
+    return { x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 };
+  }
+
+  vp.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) {
+      dragging = true;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+      vp.style.cursor = 'grabbing';
+    } else if (e.touches.length === 2) {
+      dragging = false;
+      lastDist = dist(e.touches);
+      const m = mid(e.touches);
+      const rect = vp.getBoundingClientRect();
+      lastMidX = m.x - rect.left;
+      lastMidY = m.y - rect.top;
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  vp.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 1 && dragging) {
+      tx += e.touches[0].clientX - lastX;
+      ty += e.touches[0].clientY - lastY;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+      applyTransform();
+    } else if (e.touches.length === 2) {
+      const newDist = dist(e.touches);
+      const ratio = newDist / lastDist;
+      const newScale = clamp(scale * ratio, 1, 4);
+      const rect = vp.getBoundingClientRect();
+      const m = mid(e.touches);
+      const mx = m.x - rect.left, my = m.y - rect.top;
+      tx = mx - (mx - tx) * (newScale / scale);
+      ty = my - (my - ty) * (newScale / scale);
+      scale = newScale;
+      lastDist = newDist;
+      applyTransform();
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  vp.addEventListener('touchend', function(e) {
+    if (e.touches.length < 2) lastDist = 0;
+    if (e.touches.length === 0) { dragging = false; vp.style.cursor = 'grab'; }
+  });
+
+  // Mouse support (desktop)
+  vp.addEventListener('mousedown', function(e) {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    vp.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    tx += e.clientX - lastX; ty += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    applyTransform();
+  });
+  window.addEventListener('mouseup', function() { dragging = false; vp.style.cursor = 'grab'; });
+  vp.addEventListener('wheel', function(e) {
+    const rect = vp.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const delta = e.deltaY > 0 ? 0.85 : 1.18;
+    const newScale = clamp(scale * delta, 1, 4);
+    tx = mx - (mx - tx) * (newScale / scale);
+    ty = my - (my - ty) * (newScale / scale);
+    scale = newScale;
+    applyTransform();
+    e.preventDefault();
+  }, { passive: false });
+})();
 </script>
 </body>
 </html>
