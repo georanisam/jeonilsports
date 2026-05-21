@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>체육대회 · 전일중학교 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg2: #f6f7f9;
+  --bg3: #eef0f4;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #111827;
+  --text2: #4b5563;
+  --text3: #9ca3af;
+  --accent: #2563eb;
+  --accent2: #1d4ed8;
+  --green: #16a34a;
+  --amber: #b45309;
+  --red: #dc2626;
+  --purple: #7c3aed;
+  --pink: #be185d;
+  --r: 12px;
+  --r-sm: 8px;
+}
+
+html { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 15px; line-height: 1.6; }
+body { min-height: 100vh; max-width: 480px; margin: 0 auto; padding-bottom: 80px; }
+
+/* HEADER */
+.app-header {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px 10px;
+  position: sticky; top: 0; z-index: 100;
+}
+.app-header-top { display: flex; align-items: center; justify-content: space-between; }
+.app-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--accent); }
+.app-subtitle { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+/* LIVE BAR */
+.live-bar {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  margin: 10px 20px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+.live-label { font-size: 11px; color: #6b7280; }
+.live-program { font-size: 13px; font-weight: 700; color: var(--green); flex: 1; }
+.live-time { font-size: 12px; color: #374151; font-variant-numeric: tabular-nums; }
+
+/* TABS */
+.tab-bar {
+  display: flex; overflow-x: auto;
+  padding: 10px 20px 0; gap: 2px;
+  scrollbar-width: none; border-bottom: 1.5px solid var(--border);
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0; padding: 7px 13px;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  border: none; background: transparent;
+  color: var(--text3); font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; border-bottom: 2.5px solid transparent;
+  margin-bottom: -1.5px;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: #eff6ff; }
+.tab-btn:hover:not(.active) { color: var(--text2); background: var(--bg2); }
+
+/* CONTENT */
+.tab-content { display: none; padding: 16px 20px; }
+.tab-content.active { display: block; }
+
+.sec-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
+
+/* TIMELINE */
+.timeline { position: relative; padding-left: 24px; }
+.tl-line { position: absolute; left: 6px; top: 8px; bottom: 8px; width: 1.5px; background: var(--bg3); }
+.tl-item { position: relative; padding: 0 0 18px; }
+.tl-dot {
+  position: absolute; left: -20px; top: 5px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--bg3); border: 1.5px solid var(--border2);
+  transition: all 0.2s;
+}
+.tl-item.now .tl-dot { background: var(--green); border-color: var(--green); box-shadow: 0 0 0 4px rgba(22,163,74,0.15); }
+.tl-item.done .tl-dot { background: var(--text3); border-color: var(--text3); }
+.tl-time { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
+.tl-item.now .tl-time { color: var(--green); font-weight: 700; }
+.tl-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.tl-item.done .tl-name { color: var(--text3); text-decoration: line-through; }
+.tl-item.now .tl-name { color: var(--green); font-weight: 700; }
+.tl-now-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 4px; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px;
+  background: #dcfce7; color: var(--green);
+}
+
+/* VENUE MAP */
+.venue-map { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 14px; }
+.venue-svg { width: 100%; display: block; }
+.venue-legend { padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--border); }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* EVENT CARDS */
+.event-grid { display: flex; flex-direction: column; gap: 8px; }
+.event-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.event-card:hover { border-color: var(--border2); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.event-card.open { border-color: var(--accent); }
+.event-card-header { padding: 13px 14px; display: flex; align-items: flex-start; gap: 11px; }
+.event-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.event-info { flex: 1; min-width: 0; }
+.event-name { font-size: 15px; font-weight: 700; }
+.event-meta { font-size: 11.5px; color: var(--text3); margin-top: 2px; line-height: 1.5; }
+.event-teachers { font-size: 11.5px; color: var(--accent2); margin-top: 3px; font-weight: 500; }
+.event-arrow { color: var(--text3); font-size: 16px; flex-shrink: 0; transition: transform 0.2s; margin-top: 3px; }
+.event-card.open .event-arrow { transform: rotate(180deg); }
+
+.event-detail { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+.event-card.open .event-detail { max-height: 700px; }
+.event-detail-inner { border-top: 1px solid var(--border); padding: 14px; }
+
+.detail-section { margin-bottom: 13px; }
+.detail-section:last-child { margin-bottom: 0; }
+.detail-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1px; color: var(--text3); text-transform: uppercase; margin-bottom: 6px; }
+.detail-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.rule-list { list-style: none; }
+.rule-list li { font-size: 13px; color: var(--text2); padding: 3px 0 3px 12px; position: relative; line-height: 1.6; }
+.rule-list li::before { content: "·"; position: absolute; left: 0; color: var(--text3); }
+.rule-list li.warn { color: var(--red); }
+.rule-list li.warn::before { color: var(--red); }
+
+.teacher-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.chip-teacher { background: #eff6ff; color: var(--accent2); border: 1px solid #bfdbfe; }
+.chip-student-sm { background: #f5f3ff; color: var(--purple); border: 1px solid #ddd6fe; font-size: 11px; padding: 3px 8px; }
+.chip-score { background: var(--bg2); color: var(--text2); border: 1px solid var(--border); font-size: 11.5px; }
+.chip-score-1 { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+
+/* SAFETY */
+.emergency-box {
+  background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--r);
+  padding: 14px 16px; margin-bottom: 12px;
+}
+.emergency-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.emergency-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.etag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; }
+.etag-minor { background: #fef9c3; color: #854d0e; }
+.etag-major { background: #fee2e2; color: var(--red); }
+.emergency-desc { font-size: 13px; color: #374151; flex: 1; }
+
+.call-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm);
+  padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+}
+.call-role { font-size: 11px; color: var(--text3); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
+.call-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.call-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 999px;
+  background: var(--green); color: white; font-size: 12px; font-weight: 700;
+  text-decoration: none; flex-shrink: 0;
+  border: none; cursor: pointer; margin-left: auto;
+}
+
+.safety-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 10px; }
+.safety-top { padding: 13px 16px; display: flex; align-items: center; gap: 10px; }
+.safety-icon { font-size: 20px; }
+.safety-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.safety-body { padding: 0 16px 14px; }
+.safety-body ul { list-style: none; }
+.safety-body ul li { font-size: 13px; color: var(--text2); padding: 3px 0 3px 12px; position: relative; line-height: 1.6; }
+.safety-body ul li::before { content: "·"; position: absolute; left: 0; color: var(--text3); }
+
+/* SCORE TABLE */
+.score-table-wrap { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 14px; }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border); background: var(--bg2); }
+td { font-size: 13px; color: var(--text2); padding: 8px 10px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+.rank-1 { color: #b45309; font-weight: 700; }
+.rank-2 { color: #6b7280; font-weight: 600; }
+.rank-3 { color: #92400e; font-weight: 500; }
+
+.prize-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm);
+  padding: 12px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+}
+.prize-rank { font-family: 'Bebas Neue', sans-serif; font-size: 26px; width: 32px; text-align: center; flex-shrink: 0; }
+.prize-amount { font-size: 18px; font-weight: 700; }
+.prize-label { font-size: 12px; color: var(--text3); }
+
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+.mb12 { margin-bottom: 12px; }
+.mb16 { margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-header-top">
+    <div>
+      <div class="app-title">⚡ 스포츠 한마당</div>
+      <div class="app-subtitle">전일중학교 · 2026. 05. 29. (금)</div>
+    </div>
+    <div id="clockDisplay" style="font-size:14px;color:var(--text2);font-weight:500;font-variant-numeric:tabular-nums;"></div>
+  </div>
+</div>
+
+<div class="live-bar">
+  <div class="live-dot"></div>
+  <div style="flex:1;">
+    <div class="live-label">현재 진행 중</div>
+    <div class="live-program" id="currentProgram">—</div>
+  </div>
+  <div class="live-time" id="nextInfo"></div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('schedule',this)">📅 일정</button>
+  <button class="tab-btn" onclick="switchTab('venue',this)">🗺 경기장</button>
+  <button class="tab-btn" onclick="switchTab('events',this)">🏅 종목</button>
+  <button class="tab-btn" onclick="switchTab('safety',this)">🚨 안전</button>
+  <button class="tab-btn" onclick="switchTab('score',this)">🏆 점수</button>
+</div>
+
+<!-- ===== 일정 ===== -->
+<div class="tab-content active" id="tab-schedule">
+  <p class="sec-title">전체 타임라인 · 09:00 – 15:00</p>
+  <div class="timeline">
+    <div class="tl-line"></div>
+    <div class="tl-item" data-start="09:00" data-end="09:30">
+      <div class="tl-dot"></div>
+      <div class="tl-time">09:00 – 09:30</div>
+      <div class="tl-name">개회식 및 학급별 입장</div>
+    </div>
+    <div class="tl-item" data-start="09:30" data-end="09:40">
+      <div class="tl-dot"></div>
+      <div class="tl-time">09:30 – 09:40</div>
+      <div class="tl-name">준비운동 · 5분 안전교육</div>
+    </div>
+    <div class="tl-item" data-start="09:40" data-end="10:00">
+      <div class="tl-dot"></div>
+      <div class="tl-time">09:40 – 10:00</div>
+      <div class="tl-name">단체 줄넘기 (전학년)</div>
+    </div>
+    <div class="tl-item" data-start="10:00" data-end="10:20">
+      <div class="tl-dot"></div>
+      <div class="tl-time">10:00 – 10:20</div>
+      <div class="tl-name">A줄다리기(1학년) · B놋다리(2학년) · C태풍(3학년)</div>
+    </div>
+    <div class="tl-item" data-start="10:20" data-end="10:40">
+      <div class="tl-dot"></div>
+      <div class="tl-time">10:20 – 10:40</div>
+      <div class="tl-name">A줄다리기(2학년) · B놋다리(3학년) · C태풍(1학년)</div>
+    </div>
+    <div class="tl-item" data-start="10:40" data-end="11:00">
+      <div class="tl-dot"></div>
+      <div class="tl-time">10:40 – 11:00</div>
+      <div class="tl-name">A줄다리기(3학년) · B놋다리(1학년) · C태풍(2학년)</div>
+    </div>
+    <div class="tl-item" data-start="11:00" data-end="11:30">
+      <div class="tl-dot"></div>
+      <div class="tl-time">11:00 – 11:30</div>
+      <div class="tl-name">학생 · 학부모 · 교사 이벤트 경기</div>
+    </div>
+    <div class="tl-item" data-start="11:30" data-end="12:00">
+      <div class="tl-dot"></div>
+      <div class="tl-time">11:30 – 12:00</div>
+      <div class="tl-name">이어달리기</div>
+    </div>
+    <div class="tl-item" data-start="12:00" data-end="12:50">
+      <div class="tl-dot"></div>
+      <div class="tl-time">12:00 – 12:50</div>
+      <div class="tl-name">🍱 점심시간</div>
+    </div>
+    <div class="tl-item" data-start="12:50" data-end="13:30">
+      <div class="tl-dot"></div>
+      <div class="tl-time">12:50 – 13:30</div>
+      <div class="tl-name">연합 댄스동아리 경연 + 경품 추첨</div>
+    </div>
+    <div class="tl-item" data-start="13:30" data-end="14:45">
+      <div class="tl-dot"></div>
+      <div class="tl-time">13:30 – 14:45</div>
+      <div class="tl-name">부스 운영 (학교 · 학생회 · 학부모회)</div>
+    </div>
+    <div class="tl-item" data-start="14:45" data-end="15:00">
+      <div class="tl-dot"></div>
+      <div class="tl-time">14:45 –</div>
+      <div class="tl-name">폐회식</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 경기장 ===== -->
+<div class="tab-content" id="tab-venue">
+  <p class="sec-title">학년별 구역 배치</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--r-sm);padding:10px;text-align:center;">
+      <div style="font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:3px;">1학년</div>
+      <div style="font-size:13px;color:var(--text2);">1 – 4반</div>
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--r-sm);padding:10px;text-align:center;">
+      <div style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:1px;margin-bottom:3px;">2학년</div>
+      <div style="font-size:13px;color:var(--text2);">1 – 5반</div>
+    </div>
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r-sm);padding:10px;text-align:center;">
+      <div style="font-size:11px;color:var(--amber);font-weight:700;letter-spacing:1px;margin-bottom:3px;">3학년</div>
+      <div style="font-size:13px;color:var(--text2);">1 – 5반</div>
+    </div>
+  </div>
+
+  <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:var(--r-sm);padding:9px 13px;font-size:12px;color:#9f1239;font-weight:500;margin-bottom:12px;">
+    ⚠️ 스탠드는 당일 <strong>학부모 전용</strong> — 학생 착석 및 사용 금지
+  </div>
+
+  <!-- SVG Field Map -->
+  <div class="venue-map">
+    <svg class="venue-svg" viewBox="0 0 440 330" xmlns="http://www.w3.org/2000/svg">
+      <rect width="440" height="330" fill="#f6f7f9"/>
+
+      <!-- Outer track surface (brown/red clay) -->
+      <ellipse cx="220" cy="180" rx="198" ry="126" fill="none" stroke="#c2855a" stroke-width="22" opacity="0.45"/>
+      <!-- Inner field -->
+      <ellipse cx="220" cy="180" rx="163" ry="97" fill="#d1fae5" stroke="#a7f3d0" stroke-width="1"/>
+      <!-- Outer lane edge -->
+      <ellipse cx="220" cy="180" rx="188" ry="119" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="0.8"/>
+      <!-- Middle track = 이어달리기 lane (BLUE) -->
+      <ellipse cx="220" cy="180" rx="178" ry="112" fill="none" stroke="#3b82f6" stroke-width="5" opacity="0.75"/>
+
+      <!-- Track label -->
+      <text x="220" y="43" text-anchor="middle" fill="#1d4ed8" font-size="11" font-weight="700" font-family="'Noto Sans KR',sans-serif">이어달리기 트랙(파랑)</text>
+      <path d="M138,47 Q220,28 302,47" fill="none" stroke="#3b82f6" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.6"/>
+
+      <!-- Zone A -->
+      <rect x="110" y="142" width="72" height="72" rx="7" fill="rgba(37,99,235,0.12)" stroke="#93c5fd" stroke-width="1.5"/>
+      <text x="146" y="163" text-anchor="middle" fill="#1d4ed8" font-size="14" font-weight="700" font-family="'Bebas Neue',sans-serif">A</text>
+      <text x="146" y="180" text-anchor="middle" fill="#2563eb" font-size="9" font-family="'Noto Sans KR',sans-serif">줄다리기</text>
+      <text x="146" y="194" text-anchor="middle" fill="#6b7280" font-size="8.5" font-family="'Noto Sans KR',sans-serif">1학년 줄넘기</text>
+
+
+      <!-- Zone B -->
+      <rect x="192" y="142" width="72" height="72" rx="7" fill="rgba(22,163,74,0.1)" stroke="#86efac" stroke-width="1.5"/>
+      <text x="228" y="163" text-anchor="middle" fill="#15803d" font-size="14" font-weight="700" font-family="'Bebas Neue',sans-serif">B</text>
+      <text x="228" y="180" text-anchor="middle" fill="#16a34a" font-size="9" font-family="'Noto Sans KR',sans-serif">놋다리밟기</text>
+      <text x="228" y="194" text-anchor="middle" fill="#6b7280" font-size="8.5" font-family="'Noto Sans KR',sans-serif">2학년 줄넘기</text>
+      <!-- Arrow A → B -->
+      <text x="191" y="182" text-anchor="middle" fill="#6b7280" font-size="14">➡</text>
+
+      <!-- Zone C -->
+      <rect x="274" y="142" width="72" height="72" rx="7" fill="rgba(180,83,9,0.09)" stroke="#fcd34d" stroke-width="1.5"/>
+      <text x="310" y="163" text-anchor="middle" fill="#92400e" font-size="14" font-weight="700" font-family="'Bebas Neue',sans-serif">C</text>
+      <text x="310" y="180" text-anchor="middle" fill="#b45309" font-size="9" font-family="'Noto Sans KR',sans-serif">태풍의 눈</text>
+      <text x="310" y="194" text-anchor="middle" fill="#6b7280" font-size="8.5" font-family="'Noto Sans KR',sans-serif">3학년 줄넘기</text>
+      <!-- Arrow B → C -->
+      <text x="273" y="182" text-anchor="middle" fill="#6b7280" font-size="14">➡</text>
+
+      <!-- 본부석/조회대 -->
+      <rect x="10" y="146" width="52" height="56" rx="6" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="36" y="170" text-anchor="middle" fill="#6b7280" font-size="9" font-family="'Noto Sans KR',sans-serif">본부석</text>
+      <text x="36" y="184" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="'Noto Sans KR',sans-serif">조회대</text>
+
+      <!-- 스탠드 -->
+      <rect x="368" y="76" width="64" height="46" rx="6" fill="#fff1f2" stroke="#fecdd3" stroke-width="1"/>
+      <text x="400" y="97" text-anchor="middle" fill="#be123c" font-size="9" font-weight="700" font-family="'Noto Sans KR',sans-serif">스탠드</text>
+      <text x="400" y="110" text-anchor="middle" fill="#be123c" font-size="8" font-family="'Noto Sans KR',sans-serif">학부모전용</text>
+
+      <!-- Grade labels (top) -->
+      <text x="78" y="92" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="700" font-family="'Noto Sans KR',sans-serif">1학년</text>
+      <text x="78" y="105" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="'Noto Sans KR',sans-serif">1~4반</text>
+      <text x="188" y="92" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="700" font-family="'Noto Sans KR',sans-serif">2학년</text>
+      <text x="188" y="105" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="'Noto Sans KR',sans-serif">1~5반</text>
+      <text x="298" y="92" text-anchor="middle" fill="#b45309" font-size="10" font-weight="700" font-family="'Noto Sans KR',sans-serif">3학년</text>
+      <text x="298" y="105" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="'Noto Sans KR',sans-serif">1~5반</text>
+
+      <!-- Bottom zone labels -->
+      <rect x="52" y="264" width="72" height="26" rx="5" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="88" y="277" text-anchor="middle" fill="#6b7280" font-size="9" font-family="'Noto Sans KR',sans-serif">상품수령처</text>
+      <rect x="166" y="264" width="84" height="26" rx="5" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="208" y="277" text-anchor="middle" fill="#6b7280" font-size="9" font-family="'Noto Sans KR',sans-serif">교사·학부모 부스</text>
+      <rect x="292" y="264" width="82" height="26" rx="5" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+      <text x="333" y="277" text-anchor="middle" fill="#7c3aed" font-size="9" font-family="'Noto Sans KR',sans-serif">학생회 부스</text>
+    </svg>
+
+    <div class="venue-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#93c5fd;"></div>A구역 (줄다리기)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#86efac;"></div>B구역 (놋다리밟기)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fcd34d;"></div>C구역 (태풍의 눈)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div>이어달리기 트랙(파랑)</div>
+    </div>
+  </div>
+
+  <!-- Booth -->
+  <p class="sec-title">부스 운영 안내</p>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;">
+    <div style="margin-bottom:10px;">
+      <div style="font-size:12px;color:var(--purple);font-weight:700;margin-bottom:5px;">🟣 학생 부스 5개</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">물풍선 받기 · 물총사격 · 무궁화 꽃이 피었습니다 · 바구니에 공넣기 · 체육대회 기념 촬영</div>
+    </div>
+    <div class="divider"></div>
+    <div style="margin-bottom:10px;">
+      <div style="font-size:12px;color:var(--accent2);font-weight:700;margin-bottom:5px;">🔵 학부모·교사 부스 4개</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">제기차기 · 컵쌓기 · 탁구공 던지기 · 손으로 얼음 빨리 녹이기</div>
+    </div>
+    <div class="divider"></div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--r-sm);padding:8px 12px;font-size:12px;color:var(--green);font-weight:500;">
+      🎁 전체 부스 중 <strong>5개 이상 성공</strong> 시 상품 수여 (학생·학부모·교사 전체)
+    </div>
+  </div>
+</div>
+
+<!-- ===== 종목 ===== -->
+<div class="tab-content" id="tab-events">
+  <p class="sec-title">종목 상세 — 카드를 탭하면 펼쳐집니다</p>
+  <div class="event-grid">
+
+    <!-- 단체 줄넘기 -->
+    <div class="event-card" onclick="toggleEvent(this)">
+      <div class="event-card-header">
+        <div class="event-icon" style="background:#f0fdf4;">🔄</div>
+        <div class="event-info">
+          <div class="event-name" style="color:var(--green);">단체 줄넘기</div>
+          <div class="event-meta">학급 전원 · 학년별 방식 상이 · 09:40 – 10:00</div>
+          <div class="event-teachers">👨‍🏫 이대희 · 배영수 · 김요나 · 홍문기</div>
+        </div>
+        <div class="event-arrow">▾</div>
+      </div>
+      <div class="event-detail">
+        <div class="event-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">1학년 — 협동 줄넘기</div>
+            <ul class="rule-list">
+              <li>8명 제외 나머지: 맞서뛰기 (인원이 적은 반 기준으로 동수 맞춤)</li>
+              <li>제외된 8명: 2인 1조 × 4팀 구성</li>
+              <li>순서 — 사슬뛰기 → 나란히뛰기 → 동서남북뛰기 → 줄 주고받기</li>
+              <li>모든 동작 완료까지 시간 측정, 가장 빠른 반 승리</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">2 · 3학년 — 8자 줄넘기</div>
+            <ul class="rule-list">
+              <li>학급 전원 참여 (줄 돌리기 2명 포함, 나머지는 8자로 통과)</li>
+              <li>3분간 측정, 2회 시기 중 높은 기록으로 승패 결정</li>
+              <li>동점 시 → 추가 1분 연장전으로 결선</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">준비물</div>
+            <div class="detail-text">휘슬 · 긴줄넘기 줄 · 개인 줄넘기 줄 · 마이크 · 계수기</div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">담당 교사</div>
+            <div class="teacher-chips">
+              <span class="chip chip-teacher">이대희</span>
+              <span class="chip chip-teacher">배영수</span>
+              <span class="chip chip-teacher">김요나</span>
+              <span class="chip chip-teacher">홍문기</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">배점</div>
+            <div class="teacher-chips">
+              <span class="chip chip-score-1">1위 200점</span>
+              <span class="chip chip-score">2위 150</span>
+              <span class="chip chip-score">3위 100</span>
+              <span class="chip chip-score">4위 80</span>
+              <span class="chip chip-score">5위 50</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 줄다리기 -->
+    <div class="event-card" onclick="toggleEvent(this)">
+      <div class="event-card-header">
+        <div class="event-icon" style="background:#eff6ff;">💪</div>
+        <div class="event-info">
+          <div class="event-name" style="color:var(--accent);">줄다리기</div>
+          <div class="event-meta">학급 전원 · A구역 · 10:00 – 11:00</div>
+          <div class="event-teachers">👨‍🏫 이대희 · 홍문기 · 윤혜란 · 조연희</div>
+        </div>
+        <div class="event-arrow">▾</div>
+      </div>
+      <div class="event-detail">
+        <div class="event-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">경기 규칙</div>
+            <ul class="rule-list">
+              <li>인원이 적은 반 기준으로 동수 맞춰 진행</li>
+              <li>토너먼트 방식 · 3판 2선승제</li>
+              <li>2열로 정렬 후 경기 시작</li>
+              <li>신호 3단계: <strong>줄잡아 → 일어서 → 휘슬</strong></li>
+              <li class="warn">⚠ 경기 종료 직후 줄을 바로 놓으면 넘어짐 위험 — 반드시 지도</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">준비물</div>
+            <div class="detail-text">휘슬 · 줄다리기 줄</div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">담당 교사</div>
+            <div class="teacher-chips">
+              <span class="chip chip-teacher">이대희</span>
+              <span class="chip chip-teacher">홍문기</span>
+              <span class="chip chip-teacher">윤혜란</span>
+              <span class="chip chip-teacher">조연희</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">도우미 학생</div>
+            <div class="teacher-chips">
+              <span class="chip chip-student-sm">김근우 30204</span>
+              <span class="chip chip-student-sm">유지현 30114</span>
+              <span class="chip chip-student-sm">고명현 30101</span>
+              <span class="chip chip-student-sm">허다정 20223</span>
+              <span class="chip chip-student-sm">박다은 20107</span>
+              <span class="chip chip-student-sm">최인우 20222</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">배점</div>
+            <div class="teacher-chips">
+              <span class="chip chip-score-1">1위 200점</span>
+              <span class="chip chip-score">2위 150</span>
+              <span class="chip chip-score">3위 100</span>
+              <span class="chip chip-score">4위 80</span>
+              <span class="chip chip-score">5위 50</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 놋다리밟기 -->
+    <div class="event-card" onclick="toggleEvent(this)">
+      <div class="event-card-header">
+        <div class="event-icon" style="background:#f5f3ff;">🌉</div>
+        <div class="event-info">
+          <div class="event-name" style="color:var(--purple);">놋다리밟기</div>
+          <div class="event-meta">학급 전원 · B구역 · 10:00 – 11:00</div>
+          <div class="event-teachers">👨‍🏫 배영수 · 임지현 · 김우진</div>
+        </div>
+        <div class="event-arrow">▾</div>
+      </div>
+      <div class="event-detail">
+        <div class="event-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">경기 규칙</div>
+            <ul class="rule-list">
+              <li>인원이 적은 반 기준으로 동수 맞춰 진행</li>
+              <li class="warn">⚠ 부상 우려 학생·질병 보유 학생은 사전 확인 후 반드시 제외</li>
+              <li>1열로 허리를 숙여 징검다리 형성</li>
+              <li>주자는 보조자 2명의 도움을 받아 <strong>신발 벗고</strong> 놋다리 위를 걸어 이동</li>
+              <li>도착점에 먼저 들어온 학급이 승리</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">준비물</div>
+            <div class="detail-text">휘슬 · 막대기 · 콘</div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">담당 교사</div>
+            <div class="teacher-chips">
+              <span class="chip chip-teacher">배영수</span>
+              <span class="chip chip-teacher">임지현</span>
+              <span class="chip chip-teacher">김우진</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">도우미 학생</div>
+            <div class="teacher-chips">
+              <span class="chip chip-student-sm">박상윤 30509</span>
+              <span class="chip chip-student-sm">강예솔 30201</span>
+              <span class="chip chip-student-sm">나연서 30411</span>
+              <span class="chip chip-student-sm">김단우 20304</span>
+              <span class="chip chip-student-sm">최인아 20421</span>
+              <span class="chip chip-student-sm">최윤혁 20322</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">배점</div>
+            <div class="teacher-chips">
+              <span class="chip chip-score-1">1위 200점</span>
+              <span class="chip chip-score">2위 150</span>
+              <span class="chip chip-score">3위 100</span>
+              <span class="chip chip-score">4위 80</span>
+              <span class="chip chip-score">5위 50</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 태풍의 눈 -->
+    <div class="event-card" onclick="toggleEvent(this)">
+      <div class="event-card-header">
+        <div class="event-icon" style="background:#fffbeb;">🌀</div>
+        <div class="event-info">
+          <div class="event-name" style="color:var(--amber);">태풍의 눈</div>
+          <div class="event-meta">20명 (남·녀 각 10명) · C구역 · 10:00 – 11:00</div>
+          <div class="event-teachers">👨‍🏫 최하성 · 김요나 · 민영미</div>
+        </div>
+        <div class="event-arrow">▾</div>
+      </div>
+      <div class="event-detail">
+        <div class="event-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">경기 규칙</div>
+            <ul class="rule-list">
+              <li>5명 1팀 × 4팀 (총 20명) 릴레이 방식</li>
+              <li>막대를 함께 잡고 출발</li>
+              <li>라바콘 도착 시 <strong>가장 안쪽 사람</strong>을 축으로 회전</li>
+              <li>첫 콘 = 왼쪽 축 회전 → 다음 콘 = 오른쪽 축 회전 (번갈아 적용)</li>
+              <li>라바콘 3개 돌고 출발점으로 귀환 후 다음 팀에 인계</li>
+              <li class="warn">⚠ 콘을 쓰러뜨리거나 건드리면 기록에 20초 가산</li>
+              <li>전체 완료 기록이 짧은 반 승리</li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">준비물</div>
+            <div class="detail-text">휘슬 · 막대 · 라바콘</div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">담당 교사</div>
+            <div class="teacher-chips">
+              <span class="chip chip-teacher">최하성</span>
+              <span class="chip chip-teacher">김요나</span>
+              <span class="chip chip-teacher">민영미</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">도우미 학생</div>
+            <div class="teacher-chips">
+              <span class="chip chip-student-sm">백찬형 30309</span>
+              <span class="chip chip-student-sm">최서인 30122</span>
+              <span class="chip chip-student-sm">허예원 30223</span>
+              <span class="chip chip-student-sm">임해찬 20117</span>
+              <span class="chip chip-student-sm">천송이 20520</span>
+              <span class="chip chip-student-sm">이시윤 20516</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">비고</div>
+            <div style="background:#fffbeb;border-radius:var(--r-sm);padding:8px 10px;font-size:12px;color:var(--amber);font-weight:500;">날씨에 따라 종목이 변경될 수 있음</div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">배점</div>
+            <div class="teacher-chips">
+              <span class="chip chip-score-1">1위 200점</span>
+              <span class="chip chip-score">2위 150</span>
+              <span class="chip chip-score">3위 100</span>
+              <span class="chip chip-score">4위 80</span>
+              <span class="chip chip-score">5위 50</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 이어달리기 -->
+    <div class="event-card" onclick="toggleEvent(this)">
+      <div class="event-card-header">
+        <div class="event-icon" style="background:#fff0f6;">🏃</div>
+        <div class="event-info">
+          <div class="event-name" style="color:var(--pink);">이어달리기</div>
+          <div class="event-meta">6명 (남3·여3) · 트랙 · 11:30 – 12:00</div>
+          <div class="event-teachers">👨‍🏫 이대희 · 배영수 · 김요나 · 홍문기</div>
+        </div>
+        <div class="event-arrow">▾</div>
+      </div>
+      <div class="event-detail">
+        <div class="event-detail-inner">
+          <div class="detail-section">
+            <div class="detail-label">경기 규칙</div>
+            <ul class="rule-list">
+              <li>반별 6명 구성 — 여→남→여→남→여→남 순서</li>
+              <li>개인당 운동장 반 바퀴씩, 마지막 주자는 결승선까지</li>
+              <li>출발: 해오름관 앞 / 도착: 반대편 결승 지점</li>
+              <li>대진표 추첨 후 예선 없이 <strong>단판 승부</strong></li>
+            </ul>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">준비물</div>
+            <div class="detail-text">휘슬 · 배턴 · 라바콘 · 결승 테이프</div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">담당 교사</div>
+            <div class="teacher-chips">
+              <span class="chip chip-teacher">이대희</span>
+              <span class="chip chip-teacher">배영수</span>
+              <span class="chip chip-teacher">김요나</span>
+              <span class="chip chip-teacher">홍문기</span>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-section">
+            <div class="detail-label">배점</div>
+            <div class="teacher-chips">
+              <span class="chip chip-score-1">1위 150점</span>
+              <span class="chip chip-score">2위 120</span>
+              <span class="chip chip-score">3위 90</span>
+              <span class="chip chip-score">4위 60</span>
+              <span class="chip chip-score">5위 30</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== 안전 ===== -->
+<div class="tab-content" id="tab-safety">
+  <p class="sec-title">응급 상황 대응</p>
+
+  <div class="emergency-box">
+    <div class="emergency-title">🚨 부상·응급 발생 시 즉시 대응</div>
+    <div class="emergency-row">
+      <span class="etag etag-minor">경 상</span>
+      <span class="emergency-desc">체육교사 및 보건교사에게 즉시 연락</span>
+    </div>
+    <div class="emergency-row">
+      <span class="etag etag-major">중 상</span>
+      <span class="emergency-desc"><strong style="color:var(--red);">119 먼저 신고</strong> 후 보건교사·예체능부장 연락</span>
+    </div>
+  </div>
+
+  <p class="sec-title">담당자 직통 연락</p>
+  <div>
+    <div class="call-card">
+      <div>
+        <div class="call-role">보건교사</div>
+        <div class="call-name">김예진</div>
+      </div>
+      <a class="call-btn" href="tel:01041269514">
+        📞 전화 연결
+      </a>
+    </div>
+    <div class="call-card">
+      <div>
+        <div class="call-role">예체능부장</div>
+        <div class="call-name">이대희</div>
+      </div>
+      <a class="call-btn" href="tel:01054819222">
+        📞 전화 연결
+      </a>
+    </div>
+  </div>
+
+  <p class="sec-title" style="margin-top:16px;">운영 방침</p>
+  <div class="safety-card">
+    <div class="safety-top"><span class="safety-icon">🩺</span><span class="safety-title">학생 건강 관리</span></div>
+    <div class="safety-body">
+      <ul>
+        <li>행사 전 5분 사전 안전교육 및 준비운동 의무 실시</li>
+        <li>만성질환자·요양호자는 담임이 잔류지도교사에게 사전 인계</li>
+        <li>당일 컨디션 불량 학생 파악 후 잔류지도교사에게 인계</li>
+        <li>활동 중 신체 이상 시 즉시 교사에게 알리도록 사전 지도</li>
+      </ul>
+    </div>
+  </div>
+  <div class="safety-card">
+    <div class="safety-top"><span class="safety-icon">📋</span><span class="safety-title">교직원 체크리스트</span></div>
+    <div class="safety-body">
+      <ul>
+        <li>간편한 운동복 및 운동화 착용</li>
+        <li>학생 지정 구역 유지 및 이탈 방지 지도</li>
+        <li>학년별 프로그램 순서에 따라 학생 인솔</li>
+        <li>맡은 역할 사전 숙지, 각자 배정 위치 엄수</li>
+        <li>행사 종료 후 청소·쓰레기 분리수거 지도</li>
+      </ul>
+    </div>
+  </div>
+  <div class="safety-card">
+    <div class="safety-top"><span class="safety-icon">👕</span><span class="safety-title">학생 유의사항</span></div>
+    <div class="safety-body">
+      <ul>
+        <li>복장: 체육복 + 운동화 필수 (슬리퍼·구두 금지)</li>
+        <li>지정 활동 구역 이탈 금지</li>
+        <li>이동 시 개별 행동 금지, 담임 인솔 하에 이동</li>
+        <li>스탠드 착석 금지 (학부모 전용)</li>
+        <li>무리하지 않도록 자기 몸 상태 스스로 체크</li>
+      </ul>
+    </div>
+  </div>
+  <div class="safety-card">
+    <div class="safety-top"><span class="safety-icon">☔</span><span class="safety-title">우천·천재지변 대응</span></div>
+    <div class="safety-body">
+      <ul>
+        <li>우천 또는 천재지변 발생 시 즉시 정상수업으로 전환</li>
+        <li>체육대회 일정은 추후 별도 공지 후 연기</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 점수 ===== -->
+<div class="tab-content" id="tab-score">
+  <p class="sec-title">종목별 배점표</p>
+  <div class="score-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>종목</th><th>1위</th><th>2위</th><th>3위</th><th>4위</th><th>5위</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>이어달리기</td><td class="rank-1">150</td><td class="rank-2">120</td><td class="rank-3">90</td><td>60</td><td>30</td></tr>
+        <tr><td>줄넘기</td><td class="rank-1">200</td><td class="rank-2">150</td><td class="rank-3">100</td><td>80</td><td>50</td></tr>
+        <tr><td>줄다리기</td><td class="rank-1">200</td><td class="rank-2">150</td><td class="rank-3">100</td><td>80</td><td>50</td></tr>
+        <tr><td>놋다리밟기</td><td class="rank-1">200</td><td class="rank-2">150</td><td class="rank-3">100</td><td>80</td><td>50</td></tr>
+        <tr><td>태풍의 눈</td><td class="rank-1">200</td><td class="rank-2">150</td><td class="rank-3">100</td><td>80</td><td>50</td></tr>
+        <tr>
+          <td style="color:var(--green);font-weight:500;">사회정서역량 우수</td>
+          <td colspan="5" style="color:var(--green);font-weight:700;">보너스 +50점 (학년부장 선정, 학급당 1개)</td>
+        </tr>
+        <tr>
+          <td style="color:var(--purple);font-weight:500;">입장 퍼포먼스</td>
+          <td colspan="5" style="color:var(--purple);font-weight:700;">보너스 +50점 (교장·교감 선정)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:var(--r-sm);padding:10px 13px;font-size:12px;color:var(--red);font-weight:500;margin-bottom:16px;">
+    ⚠ 스포츠퍼슨십에 어긋난 행동 시 해당 종목 <strong>0점</strong> 처리 — 판단: 각 학년 체육교사
+  </div>
+
+  <p class="sec-title">학급 시상 (학년별)</p>
+  <div class="prize-card"><div class="prize-rank" style="color:#b45309;">1</div><div><div class="prize-label">종합 1위</div><div class="prize-amount" style="color:#b45309;">학급비 15만원</div></div></div>
+  <div class="prize-card"><div class="prize-rank" style="color:#6b7280;">2</div><div><div class="prize-label">종합 2위</div><div class="prize-amount" style="color:#6b7280;">학급비 13만원</div></div></div>
+  <div class="prize-card" style="margin-bottom:16px;"><div class="prize-rank" style="color:#92400e;">3</div><div><div class="prize-label">종합 3위</div><div class="prize-amount" style="color:#92400e;">학급비 10만원</div></div></div>
+
+  <p class="sec-title">경품 추첨 목록</p>
+  <div class="score-table-wrap">
+    <table>
+      <thead><tr><th>상품</th><th>인원</th><th>단가</th></tr></thead>
+      <tbody>
+        <tr><td>샤오미 스마트밴드9 액티브</td><td>3명</td><td>40,000원</td></tr>
+        <tr><td>락앤락 대용량 텀블러</td><td>3명</td><td>35,000원</td></tr>
+        <tr><td>루메나 휴대용 선풍기</td><td>3명</td><td>35,000원</td></tr>
+        <tr><td style="color:var(--pink);font-weight:500;">교장선생님과 데이트권</td><td style="color:var(--pink);">1명 (+동반1인)</td><td style="color:var(--text3);">—</td></tr>
+        <tr><td>우산</td><td>3명</td><td>20,000원</td></tr>
+        <tr><td>썬크림</td><td>3명</td><td>20,000원</td></tr>
+        <tr><td>스포츠 양말</td><td>5명</td><td>5,000원</td></tr>
+        <tr><td>스포츠 물병</td><td>7명</td><td>12,000원</td></tr>
+        <tr><td>코카콜라 음료수 2개</td><td>12명</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">※ 데이트권은 학생 외 당첨 시 재추첨 / 총 경품 예산 584,000원</div>
+
+  <p class="sec-title">점수·사진 담당</p>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px 16px;font-size:13px;color:var(--text2);line-height:2;">
+    전체 점수 기록 → <strong style="color:var(--text);">이혜주 (이지혜)</strong><br>
+    본부 지원 → <strong style="color:var(--text);">홍은경 · 권은미</strong><br>
+    사진 촬영 → <strong style="color:var(--text);">이지현</strong>
+  </div>
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleEvent(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.event-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+const schedule = [
+  { name: '개회식 및 학급 입장', start: [9,0],  end: [9,30]  },
+  { name: '준비운동 · 안전교육',  start: [9,30], end: [9,40]  },
+  { name: '단체 줄넘기',          start: [9,40], end: [10,0]  },
+  { name: '학년별 순환 (1라운드)',start: [10,0], end: [10,20] },
+  { name: '학년별 순환 (2라운드)',start: [10,20],end: [10,40] },
+  { name: '학년별 순환 (3라운드)',start: [10,40],end: [11,0]  },
+  { name: '이벤트 경기',          start: [11,0], end: [11,30] },
+  { name: '이어달리기',           start: [11,30],end: [12,0]  },
+  { name: '점심시간',             start: [12,0], end: [12,50] },
+  { name: '댄스 경연 + 경품 추첨',start: [12,50],end: [13,30] },
+  { name: '부스 운영',            start: [13,30],end: [14,45] },
+  { name: '폐회식',               start: [14,45],end: [15,0]  },
+];
+
+function toMin(h, m) { return h * 60 + m; }
+
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const cur = toMin(h, m);
+
+  document.getElementById('clockDisplay').textContent =
+    String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+
+  let active = null;
+  for (const s of schedule) {
+    if (cur >= toMin(s.start[0],s.start[1]) && cur < toMin(s.end[0],s.end[1])) { active = s; break; }
+  }
+
+  const prog = document.getElementById('currentProgram');
+  const next = document.getElementById('nextInfo');
+
+  if (active) {
+    prog.textContent = active.name;
+    const remain = toMin(active.end[0], active.end[1]) - cur;
+    next.textContent = '종료까지 ' + remain + '분';
+  } else if (cur < toMin(9,0)) {
+    prog.textContent = '행사 시작 전 · 09:00 개시';
+    next.textContent = '';
+  } else if (cur >= toMin(15,0)) {
+    prog.textContent = '행사 종료 · 수고하셨습니다 🎉';
+    next.textContent = '';
+  } else {
+    prog.textContent = '—';
+    next.textContent = '';
+  }
+
+  document.querySelectorAll('.tl-item').forEach(item => {
+    item.classList.remove('now','done');
+    const ts = item.dataset.start, te = item.dataset.end;
+    if (!ts || !te) return;
+    const [sh,sm] = ts.split(':').map(Number);
+    const [eh,em] = te.split(':').map(Number);
+    if (cur >= toMin(sh,sm) && cur < toMin(eh,em)) item.classList.add('now');
+    else if (cur >= toMin(eh,em)) item.classList.add('done');
+  });
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
